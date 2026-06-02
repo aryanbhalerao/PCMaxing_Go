@@ -34,6 +34,11 @@ func listComponents(w http.ResponseWriter, r *http.Request) {
 	search := r.URL.Query().Get("search")
 	sort := r.URL.Query().Get("sort")
 
+	if len(category) > maxParamLen || len(search) > maxParamLen {
+		writeError(w, http.StatusBadRequest, "Query parameter too long")
+		return
+	}
+
 	q := supabase.From("components")
 
 	if category != "" {
@@ -53,7 +58,7 @@ func listComponents(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var components []Component
-	if err := q.Execute(&components); err != nil {
+	if err := q.Execute(r.Context(), &components); err != nil {
 		log.Printf("listComponents error: %v", err)
 		writeError(w, http.StatusInternalServerError, "Failed to fetch components")
 		return
@@ -77,7 +82,7 @@ func getComponent(w http.ResponseWriter, r *http.Request) {
 
 	q := supabase.From("components").Eq("id", strconv.Itoa(id))
 	var components []Component
-	if err := q.Execute(&components); err != nil {
+	if err := q.Execute(r.Context(), &components); err != nil {
 		log.Printf("getComponent error: %v", err)
 		writeError(w, http.StatusInternalServerError, "Failed to fetch component")
 		return

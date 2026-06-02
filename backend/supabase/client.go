@@ -1,6 +1,7 @@
 package supabase
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -8,12 +9,13 @@ import (
 	"net/url"
 	"os"
 	"strings"
+	"time"
 )
 
 var (
 	restURL string
 	apiKey  string
-	hc      = &http.Client{}
+	hc      = &http.Client{Timeout: 10 * time.Second}
 )
 
 // Init reads SUPABASE_URL and SUPABASE_ANON_KEY from the environment.
@@ -78,10 +80,11 @@ func (q *Query) queryString() string {
 }
 
 // Execute runs the query and JSON-decodes the response into dest (must be a pointer).
-func (q *Query) Execute(dest interface{}) error {
+// The provided context governs cancellation and the request deadline.
+func (q *Query) Execute(ctx context.Context, dest interface{}) error {
 	endpoint := fmt.Sprintf("%s/%s?%s", restURL, q.table, q.queryString())
 
-	req, err := http.NewRequest(http.MethodGet, endpoint, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint, nil)
 	if err != nil {
 		return err
 	}

@@ -25,7 +25,7 @@ func CategoriesRouter() http.Handler {
 func listCategories(w http.ResponseWriter, r *http.Request) {
 	q := supabase.From("components").Select("category").Order("category", true)
 	var rows []categoryRow
-	if err := q.Execute(&rows); err != nil {
+	if err := q.Execute(r.Context(), &rows); err != nil {
 		log.Printf("listCategories error: %v", err)
 		writeError(w, http.StatusInternalServerError, "Failed to fetch categories")
 		return
@@ -45,9 +45,14 @@ func listCategories(w http.ResponseWriter, r *http.Request) {
 // GET /api/categories/:category/components
 func getCategoryComponents(w http.ResponseWriter, r *http.Request) {
 	category := chi.URLParam(r, "category")
+	if category == "" || len(category) > maxParamLen {
+		writeError(w, http.StatusBadRequest, "Invalid category")
+		return
+	}
+
 	q := supabase.From("components").Eq("category", category).Order("price", true)
 	var components []Component
-	if err := q.Execute(&components); err != nil {
+	if err := q.Execute(r.Context(), &components); err != nil {
 		log.Printf("getCategoryComponents error: %v", err)
 		writeError(w, http.StatusInternalServerError, "Failed to fetch components")
 		return

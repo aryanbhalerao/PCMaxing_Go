@@ -10,9 +10,7 @@ export interface CompatibilityResult {
   issues: string[];
 }
 
-// In production Vercel routes /_/backend/* to the Express service.
-// The Vite dev server proxies /_/backend to http://localhost:5000.
-const API_BASE = '/_/backend';
+const API_BASE = '';
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, options);

@@ -1,0 +1,37 @@
+# Vercel
+.vercel
+
+# Dependencies
+node_modules/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+frontend/.env
+backend/.env
+
+# Build output
+frontend/dist/
+
+# Go binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Go test/coverage
+*.test
+*.out
+
+# Editor
+.vscode/
+.idea/
+
+# Supabase CLI runtime state
+supabase/.temp/
+
+# Misc
+ENDPOINTS.md
+CLAUDE.md

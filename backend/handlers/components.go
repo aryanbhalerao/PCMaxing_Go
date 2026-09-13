@@ -6,17 +6,19 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
+	"gorm.io/datatypes"
+	"gorm.io/gorm"
 
-	"pcmaxing/backend/supabase"
+	"pcmaxing/backend/db"
 )
 
-// Component mirrors the Supabase `components` table row.
+// Component mirrors the `components` table row.
 type Component struct {
-	ID       int                    `json:"id"`
-	Category string                 `json:"category"`
-	Name     string                 `json:"name"`
-	Price    int                    `json:"price"`
-	Details  map[string]interface{} `json:"details"`
+	ID       int               `json:"id" gorm:"primaryKey"`
+	Category string            `json:"category"`
+	Name     string            `json:"name"`
+	Price    int               `json:"price"`
+	Details  datatypes.JSONMap `json:"details"`
 }
 
 // ComponentsRouter returns a chi router for /api/components.
@@ -39,32 +41,31 @@ func listComponents(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	q := supabase.From("components")
+	var components []Component
+	query := db.DB.Model(&Component{})
 
 	if category != "" {
-		q = q.Eq("category", category)
+		query = query.Where("category = ?", category)
 	}
 	if search != "" {
-		q = q.ILike("name", "*"+search+"*")
+		query = query.Where("name LIKE ?", "%"+search+"%")
 	}
 
 	switch sort {
 	case "price_desc":
-		q = q.Order("price", false)
+		query = query.Order("price DESC")
 	case "price_asc":
-		q = q.Order("price", true)
+		query = query.Order("price ASC")
 	default:
-		q = q.Order("category", true).Order("price", true)
+		query = query.Order("category ASC, price ASC")
 	}
 
-	var components []Component
-	if err := q.Execute(r.Context(), &components); err != nil {
+	if err := query.Find(&components).Error; err != nil {
 		log.Printf("listComponents error: %v", err)
 		writeError(w, http.StatusInternalServerError, "Failed to fetch components")
 		return
 	}
 
-	// Return [] instead of null for empty results.
 	if components == nil {
 		components = []Component{}
 	}
@@ -80,17 +81,16 @@ func getComponent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	q := supabase.From("components").Eq("id", strconv.Itoa(id))
-	var components []Component
-	if err := q.Execute(r.Context(), &components); err != nil {
+	var c Component
+	if err := db.DB.First(&c, id).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			writeError(w, http.StatusNotFound, "Component not found")
+			return
+		}
 		log.Printf("getComponent error: %v", err)
 		writeError(w, http.StatusInternalServerError, "Failed to fetch component")
 		return
 	}
 
-	if len(components) == 0 {
-		writeError(w, http.StatusNotFound, "Component not found")
-		return
-	}
-	writeJSON(w, http.StatusOK, components[0])
+	writeJSON(w, http.StatusOK, c)
 }

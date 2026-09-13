@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - DB_PATH=/app/data/pcmaxing.db
+      # Add other environment variables here if needed, or pass an env_file
+      # - ALLOWED_ORIGIN=http://localhost:80 # if needed for CORS (though Nginx serves them from same origin)
+    volumes:
+      - pcmaxing_data:/app/data
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  pcmaxing_data:

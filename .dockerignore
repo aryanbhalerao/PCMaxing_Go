@@ -1,0 +1,9 @@
+node_modules
+.git
+dist
+frontend/dist
+pcmaxing.db
+backend/pcmaxing.db
+backend/data
+data/
+*.exe

@@ -1,0 +1,157 @@
+openapi: 3.0.0
+info:
+  title: PCMaxing API
+  description: Comprehensive API Documentation for PCMaxing
+  version: 1.0.0
+servers:
+  - url: http://localhost:5000/api
+    description: Local Dev Server
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []
+paths:
+  /auth/signup:
+    post:
+      summary: Register a new user
+      tags: [Auth]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email: { type: string }
+                username: { type: string }
+                password: { type: string }
+      responses:
+        '200': { description: "User created" }
+  /auth/login:
+    post:
+      summary: Login user
+      tags: [Auth]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email: { type: string }
+                password: { type: string }
+      responses:
+        '200': { description: "Logged in successfully" }
+  /auth/logout:
+    post:
+      summary: Logout user
+      tags: [Auth]
+      responses:
+        '200': { description: "Logged out" }
+  /auth/me:
+    get:
+      summary: Get current user
+      tags: [Auth]
+      responses:
+        '200': { description: "Current user details" }
+  /components:
+    get:
+      summary: List components
+      tags: [Components]
+      security: []
+      parameters:
+        - name: category
+          in: query
+          schema: { type: string }
+        - name: search
+          in: query
+          schema: { type: string }
+        - name: sort
+          in: query
+          schema: { type: string, enum: [price_asc, price_desc] }
+      responses:
+        '200': { description: "List of components" }
+  /components/{id}:
+    get:
+      summary: Get component by ID
+      tags: [Components]
+      security: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: "Component details" }
+  /categories:
+    get:
+      summary: List all component categories
+      tags: [Categories]
+      security: []
+      responses:
+        '200': { description: "List of categories" }
+  /builds/popular:
+    get:
+      summary: Get popular builds
+      tags: [Builds]
+      security: []
+      responses:
+        '200': { description: "List of popular builds" }
+  /builds/saved:
+    get:
+      summary: Get user's saved builds
+      tags: [Builds]
+      responses:
+        '200': { description: "User's saved builds" }
+    post:
+      summary: Save a new build
+      tags: [Builds]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+                parts: { type: object }
+                total_price: { type: integer }
+                is_public: { type: boolean }
+      responses:
+        '200': { description: "Build saved" }
+  /builds/history:
+    get:
+      summary: Get user's build history
+      tags: [Builds]
+      responses:
+        '200': { description: "History" }
+    post:
+      summary: Add to history
+      tags: [Builds]
+      responses:
+        '200': { description: "Added to history" }
+  /favourites:
+    get:
+      summary: Get favourite components
+      tags: [Favourites]
+      responses:
+        '200': { description: "List of favourite components" }
+    post:
+      summary: Add or remove a favourite
+      tags: [Favourites]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                component_id: { type: integer }
+      responses:
+        '200': { description: "Status updated" }

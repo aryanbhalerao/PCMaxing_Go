@@ -1,5 +1,4 @@
--- PCMaxing – Supabase (PostgreSQL) Setup
--- Paste this into: https://app.supabase.com/project/<your-project>/sql/new
+-- PCMaxing – PostgreSQL / SQLite Setup
 
 DROP TABLE IF EXISTS components;
 

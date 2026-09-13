@@ -217,22 +217,41 @@ const SearchableDropdown = ({ category, items, selectedItem, onSelect }: any) =>
 // --- Auth Modal ---
 const AuthModal = ({ onClose, onLoginSuccess }: any) => {
   const [mode, setMode] = useState<'login' | 'signup'>('login');
+  const [signupStep, setSignupStep] = useState(1);
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    
+    if (mode === 'signup' && signupStep === 1) {
+      setSignupStep(2);
+      return;
+    }
+
+    if (mode === 'signup' && signupStep === 2) {
+      if (password !== confirmPassword) {
+        setError('Passwords do not match');
+        return;
+      }
+      if (password.length < 8 || !/[A-Z]/.test(password) || !/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+        setError('Password must be 8+ chars with 1 uppercase and 1 special symbol');
+        return;
+      }
+    }
+
     setLoading(true);
     try {
       let res;
       if (mode === 'signup') {
         res = await api.signup(email, username, password);
       } else {
-        res = await api.login(email, password);
+        res = await api.login(username, password);
       }
       localStorage.setItem('token', res.token);
       onLoginSuccess(res.user);
@@ -248,27 +267,54 @@ const AuthModal = ({ onClose, onLoginSuccess }: any) => {
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <button className="close-btn" onClick={onClose}>✕</button>
         <div className="auth-tabs">
-          <button className={`auth-tab ${mode === 'login' ? 'active' : ''}`} onClick={() => { setMode('login'); setError(''); }}>Sign In</button>
-          <button className={`auth-tab ${mode === 'signup' ? 'active' : ''}`} onClick={() => { setMode('signup'); setError(''); }}>Sign Up</button>
+          <button className={`auth-tab ${mode === 'login' ? 'active' : ''}`} onClick={() => { setMode('login'); setSignupStep(1); setError(''); }}>Sign In</button>
+          <button className={`auth-tab ${mode === 'signup' ? 'active' : ''}`} onClick={() => { setMode('signup'); setSignupStep(1); setError(''); }}>Sign Up</button>
         </div>
         {error && <div className="auth-error">{error}</div>}
         <form className="auth-form" onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Email</label>
-            <input type="email" required value={email} onChange={e => setEmail(e.target.value)} />
-          </div>
-          {mode === 'signup' && (
-            <div className="form-group">
-              <label>Username</label>
-              <input type="text" required value={username} onChange={e => setUsername(e.target.value)} />
-            </div>
+          
+          {mode === 'login' && (
+            <>
+              <div className="form-group">
+                <label className="login-username-label">Username</label>
+                <input type="text" className="login-username-input" required value={username} onChange={e => setUsername(e.target.value)} />
+              </div>
+              <div className="form-group">
+                <label>Password</label>
+                <input type="password" required value={password} onChange={e => setPassword(e.target.value)} />
+              </div>
+            </>
           )}
-          <div className="form-group">
-            <label>Password</label>
-            <input type="password" required value={password} onChange={e => setPassword(e.target.value)} />
-          </div>
+
+          {mode === 'signup' && signupStep === 1 && (
+            <>
+              <div className="form-group">
+                <label>Email</label>
+                <input type="email" required value={email} onChange={e => setEmail(e.target.value)} />
+              </div>
+              <div className="form-group">
+                <label className="login-username-label">Username</label>
+                <input type="text" className="login-username-input" required value={username} onChange={e => setUsername(e.target.value)} />
+              </div>
+            </>
+          )}
+
+          {mode === 'signup' && signupStep === 2 && (
+            <>
+              <div className="form-group">
+                <label>Password</label>
+                <input type="password" required value={password} onChange={e => setPassword(e.target.value)} />
+              </div>
+              <div className="form-group">
+                <label>Confirm Password</label>
+                <input type="password" required value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} />
+              </div>
+              <button type="button" className="btn-secondary auth-btn" onClick={() => { setSignupStep(1); setError(''); }}>Back</button>
+            </>
+          )}
+
           <button type="submit" className="btn-primary auth-btn" disabled={loading}>
-            {loading ? 'Processing...' : (mode === 'login' ? 'Sign In' : 'Sign Up')}
+            {loading ? 'Processing...' : (mode === 'signup' && signupStep === 1 ? 'Next' : (mode === 'login' ? 'Sign In' : 'Sign Up'))}
           </button>
         </form>
       </div>
@@ -279,10 +325,18 @@ const AuthModal = ({ onClose, onLoginSuccess }: any) => {
 // --- PCDiagram ---
 const PCDiagram = ({ selectedParts }: { selectedParts: Record<string, PCComponent> }) => {
   const isSelected = (cat: string) => !!selectedParts[cat];
+  const issues = getCompatibilityIssues(selectedParts);
+  // Match the exact category names from the issues strings
+  const hasError = (cat: string) => issues.some(issue => issue.includes(cat));
 
-  const StatusIcon = ({ selected, x, y, label }: { selected: boolean, x: number, y: number, label: string }) => (
+  const StatusIcon = ({ selected, error, x, y, label }: { selected: boolean, error: boolean, x: number, y: number, label: string }) => (
     <g transform={`translate(${x}, ${y})`}>
-      {selected ? (
+      {error ? (
+        <>
+          <circle cx="0" cy="0" r="10" fill="#ef4444" />
+          <path d="M-3 -3 L3 3 M-3 3 L3 -3" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" />
+        </>
+      ) : selected ? (
         <>
           <circle cx="0" cy="0" r="10" fill="#10b981" />
           <path d="M-4 0 L-1 3 L4 -3" fill="none" stroke="white" strokeWidth="2" />
@@ -295,57 +349,58 @@ const PCDiagram = ({ selectedParts }: { selectedParts: Record<string, PCComponen
   );
 
   return (
-    <div className="pc-diagram-container" style={{background: 'var(--bg-card)', padding: '0.5rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '240px'}}>
+    <div className="pc-diagram-container" style={{background: 'var(--diagram-bg)', padding: '0.5rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '240px'}}>
       <svg style={{width: '100%', height: '100%'}} viewBox="0 0 420 300" fill="none" xmlns="http://www.w3.org/2000/svg">
         {/* Simple Case Body */}
-        <rect x="20" y="10" width="220" height="270" rx="4" fill="var(--bg-glass)" stroke="var(--border-color)" strokeWidth="4"/>
+        <rect x="20" y="10" width="220" height="270" rx="4" fill="var(--bg-card)" stroke="var(--border-color)" strokeWidth="4"/>
         
         {/* Case Status (where fans used to be) */}
-        <StatusIcon selected={isSelected('Case')} x={210} y={90} label="Case" />
+        <StatusIcon selected={isSelected('Case')} error={hasError('Case')} x={210} y={90} label="Case" />
 
         {/* Motherboard */}
         <rect x="35" y="30" width="140" height="170" rx="2" fill="var(--bg-card)" stroke="var(--border-color)" strokeWidth="2"/>
+        <StatusIcon selected={isSelected('Motherboard')} error={hasError('Motherboard')} x={95} y={125} label="Motherboard" />
         
         {/* CPU */}
-        <rect x="75" y="55" width="40" height="40" rx="2" fill="var(--border-color)" stroke="var(--text-secondary)" strokeWidth="2"/>
-        <rect x="83" y="63" width="24" height="24" rx="2" fill="var(--text-secondary)" />
-        <StatusIcon selected={isSelected('CPU')} x={95} y={75} label="CPU" />
+        <rect x="75" y="55" width="40" height="40" rx="2" fill="var(--bg-card)" stroke="var(--border-color)" strokeWidth="2"/>
+        <rect x="83" y="63" width="24" height="24" rx="2" fill="var(--bg-card)" stroke="var(--border-color)" strokeWidth="1"/>
+        <StatusIcon selected={isSelected('CPU')} error={hasError('CPU')} x={95} y={75} label="CPU" />
 
         {/* RAM */}
-        <rect x="130" y="45" width="6" height="55" rx="2" fill="var(--text-secondary)" />
-        <rect x="140" y="45" width="6" height="55" rx="2" fill="var(--text-secondary)" />
-        <rect x="150" y="45" width="6" height="55" rx="2" fill="var(--text-secondary)" />
-        <StatusIcon selected={isSelected('RAM')} x={143} y={72} label="Memory" />
+        <rect x="130" y="45" width="6" height="55" rx="2" fill="var(--bg-card)" stroke="var(--border-color)" strokeWidth="1"/>
+        <rect x="140" y="45" width="6" height="55" rx="2" fill="var(--bg-card)" stroke="var(--border-color)" strokeWidth="1"/>
+        <rect x="150" y="45" width="6" height="55" rx="2" fill="var(--bg-card)" stroke="var(--border-color)" strokeWidth="1"/>
+        <StatusIcon selected={isSelected('RAM')} error={hasError('RAM')} x={143} y={72} label="Memory" />
 
         {/* GPU */}
-        <rect x="40" y="130" width="150" height="35" rx="2" fill="var(--bg-glass)" stroke="var(--border-color)" strokeWidth="2"/>
-        <StatusIcon selected={isSelected('GPU')} x={115} y={147} label="GPU" />
+        <rect x="40" y="160" width="150" height="35" rx="2" fill="var(--bg-card)" stroke="var(--border-color)" strokeWidth="2"/>
+        <StatusIcon selected={isSelected('GPU')} error={hasError('GPU')} x={115} y={177} label="GPU" />
 
         {/* PSU */}
         <rect x="30" y="220" width="85" height="50" rx="2" fill="var(--bg-card)" stroke="var(--border-color)" strokeWidth="2"/>
-        <StatusIcon selected={isSelected('PSU')} x={72} y={245} label="PSU" />
+        <StatusIcon selected={isSelected('PSU')} error={hasError('PSU')} x={72} y={245} label="PSU" />
 
         {/* Storage */}
-        <rect x="135" y="225" width="70" height="20" rx="2" fill="var(--bg-glass)" stroke="var(--border-color)" strokeWidth="2"/>
-        <rect x="135" y="250" width="70" height="20" rx="2" fill="var(--bg-glass)" stroke="var(--border-color)" strokeWidth="2"/>
-        <StatusIcon selected={isSelected('Storage')} x={170} y={237} label="Storage" />
+        <rect x="135" y="225" width="70" height="20" rx="2" fill="var(--bg-card)" stroke="var(--border-color)" strokeWidth="2"/>
+        <rect x="135" y="250" width="70" height="20" rx="2" fill="var(--bg-card)" stroke="var(--border-color)" strokeWidth="2"/>
+        <StatusIcon selected={isSelected('Storage')} error={hasError('Storage')} x={170} y={237} label="Storage" />
 
         {/* Monitor */}
         <rect x="270" y="30" width="140" height="90" rx="4" fill="var(--bg-card)" stroke="var(--border-color)" strokeWidth="3"/>
-        <rect x="275" y="35" width="130" height="75" rx="2" fill="var(--bg-glass)" />
+        <rect x="275" y="35" width="130" height="75" rx="2" fill="var(--bg-card)" />
         <path d="M 315 120 L 315 150 M 290 150 L 350 150" stroke="var(--border-color)" strokeWidth="4" strokeLinecap="round"/>
-        <StatusIcon selected={isSelected('Monitor')} x={340} y={75} label="Monitor" />
+        <StatusIcon selected={isSelected('Monitor')} error={hasError('Monitor')} x={340} y={75} label="Monitor" />
 
         {/* Keyboard */}
         <rect x="270" y="190" width="100" height="35" rx="2" fill="var(--bg-card)" stroke="var(--border-color)" strokeWidth="2"/>
-        <rect x="275" y="195" width="90" height="25" fill="var(--bg-glass)" rx="2"/>
-        <StatusIcon selected={isSelected('Keyboard')} x={320} y={207} label="Keyboard" />
+        <rect x="275" y="195" width="90" height="25" fill="var(--bg-card)" rx="2"/>
+        <StatusIcon selected={isSelected('Keyboard')} error={hasError('Keyboard')} x={320} y={207} label="Keyboard" />
 
         {/* Mouse */}
         <rect x="380" y="190" width="25" height="40" rx="12" fill="var(--bg-card)" stroke="var(--border-color)" strokeWidth="2"/>
         <line x1="380" y1="205" x2="405" y2="205" stroke="var(--border-color)" strokeWidth="2"/>
         <line x1="392.5" y1="190" x2="392.5" y2="205" stroke="var(--border-color)" strokeWidth="2"/>
-        <StatusIcon selected={isSelected('Mouse')} x={392} y={245} label="Mouse" />
+        <StatusIcon selected={isSelected('Mouse')} error={hasError('Mouse')} x={392} y={210} label="Mouse" />
       </svg>
     </div>
   );
@@ -647,11 +702,9 @@ export default function App() {
           <button className={`nav-tab ${activeTab === 'popular' ? 'active' : ''}`} onClick={() => setActiveTab('popular')}>Popular Builds</button>
           <button className={`nav-tab ${activeTab === 'saved' ? 'active' : ''}`} onClick={() => setActiveTab('saved')}>
             Saved Builds
-            {savedBuilds.length > 0 && <span className="nav-badge">{savedBuilds.length}</span>}
           </button>
           <button className={`nav-tab ${activeTab === 'favourites' ? 'active' : ''}`} onClick={() => setActiveTab('favourites')}>
             Favourite Components
-            {favourites.size > 0 && <span className="nav-badge">{favourites.size}</span>}
           </button>
         </div>
         <div className="nav-right">
@@ -677,8 +730,7 @@ export default function App() {
           {user ? (
             <div className="user-menu-area">
               <button className="welcome-back-btn" onClick={() => setUserMenuOpen(!userMenuOpen)}>
-                <span className="welcome-text">Welcome back, </span>
-                <span className="welcome-username">{user.username}</span>
+                <span className="welcome-text">Welcome back, {user.username}</span>
                 <svg className="welcome-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: userMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s ease' }}>
                   <path d="M3 4.5L6 7.5L9 4.5" />
                 </svg>

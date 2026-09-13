@@ -117,11 +117,11 @@ export const api = {
     });
   },
 
-  login(email: string, password: string): Promise<AuthResponse> {
+  login(username: string, password: string): Promise<AuthResponse> {
     return request('/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ username, password }),
     });
   },
 

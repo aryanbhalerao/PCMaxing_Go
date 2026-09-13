@@ -112,7 +112,7 @@ func signup(w http.ResponseWriter, r *http.Request) {
 
 func login(w http.ResponseWriter, r *http.Request) {
 	var req struct {
-		Email    string `json:"email"`
+		Username string `json:"username"`
 		Password string `json:"password"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -121,9 +121,9 @@ func login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var user User
-	err := db.DB.Where("email = ?", req.Email).First(&user).Error
+	err := db.DB.Where("username = ?", req.Username).First(&user).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		writeError(w, http.StatusUnauthorized, "invalid email or password")
+		writeError(w, http.StatusUnauthorized, "invalid username or password")
 		return
 	} else if err != nil {
 		writeError(w, http.StatusInternalServerError, "database error")
@@ -132,7 +132,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(req.Password))
 	if err != nil {
-		writeError(w, http.StatusUnauthorized, "invalid email or password")
+		writeError(w, http.StatusUnauthorized, "invalid username or password")
 		return
 	}
 

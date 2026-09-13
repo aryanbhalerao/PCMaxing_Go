@@ -61,3 +61,19 @@ npm install
 npm run dev
 ```
 The frontend will run on `http://localhost:5173` (by default) and proxy `/api` requests to the Go backend.
+
+## Tests
+
+Our test architecture ensures comprehensive coverage across the stack. The frontend utilizes end-to-end (E2E) UI testing to validate user flows, compatibility checker edge cases, and theme rendering. The backend employs unit and integration tests written in Go to verify authentication logic, database integrity, and REST API functionality. Both suites are integrated into our GitHub Actions CI/CD pipelines.
+
+* [Frontend Tests](docs/frontend_tests.md)
+* [Backend Tests](docs/backend_tests.md)
+
+## Snapshots
+
+Here is a glimpse of the PC Builder UI and compatibility checker in action:
+
+![PC Builder Light Mode](docs/snapshots/build.png)
+![PC Builder Dark Mode](docs/snapshots/build_dark.png)
+![Compatibility Issue Light](docs/snapshots/build_compatibility_issue.png)
+![Compatibility Issue Dark](docs/snapshots/build_compatibility_issue_dark.png)

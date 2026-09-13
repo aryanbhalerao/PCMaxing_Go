@@ -37,16 +37,16 @@ func getFavourites(w http.ResponseWriter, r *http.Request) {
 	}
 	defer rows.Close()
 
-	var ids []string
+	var ids []int
 	for rows.Next() {
-		var compID string
+		var compID int
 		if err := rows.Scan(&compID); err == nil {
 			ids = append(ids, compID)
 		}
 	}
 
 	if ids == nil {
-		ids = []string{}
+		ids = []int{}
 	}
 
 	writeJSON(w, http.StatusOK, ids)
@@ -60,7 +60,7 @@ func addFavourite(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var req struct {
-		ComponentID string `json:"component_id"`
+		ComponentID int `json:"component_id"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		writeError(w, http.StatusBadRequest, "invalid request")

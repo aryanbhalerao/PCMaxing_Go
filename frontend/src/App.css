@@ -21,6 +21,8 @@
   --tier-mid: #3b82f6;
   --tier-high: #8b5cf6;
   --tier-enthusiast: #f59e0b;
+  
+  --diagram-bg: #e2e8f0;
 }
 
 [data-theme='dark'] {
@@ -38,6 +40,8 @@
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  
+  --diagram-bg: #475569;
 }
 
 * {
@@ -813,7 +817,7 @@ body {
 
 .qty-btn.active {
   background: var(--accent-primary);
-  color: white;
+  color: var(--bg-color);
   border-color: var(--accent-primary);
 }
 
@@ -850,7 +854,7 @@ body {
 
 .cat-tab.active {
   background: var(--accent-gradient);
-  color: white;
+  color: var(--bg-color);
   border-color: transparent;
 }
 
@@ -1268,6 +1272,15 @@ body {
   border-color: var(--accent-primary);
 }
 
+.login-username-input,
+.login-username-label {
+  font-family: inherit !important;
+  font-size: 0.875rem !important;
+  color: var(--text-secondary) !important;
+  font-weight: normal !important;
+  -webkit-text-stroke: 0 !important;
+}
+
 .auth-btn {
   margin-top: 1rem;
   width: 100%;
@@ -1443,7 +1456,7 @@ body {
 /* Nav Badge */
 .nav-badge {
   background: var(--accent-primary);
-  color: white;
+  color: var(--bg-color);
   font-size: 0.65rem;
   font-weight: 700;
   padding: 0.1rem 0.4rem;

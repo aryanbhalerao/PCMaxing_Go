@@ -1,6 +1,6 @@
 # PCMaxing.com
-[![Backend Tests](https://github.com/aryanbhalerao/PCMaxing_Go/actions/workflows/backend-tests.yml/badge.svg)](https://github.com/aryanbhalerao/PCMaxing_Go/actions/workflows/backend-tests.yml)
-[![Frontend E2E Tests](https://github.com/aryanbhalerao/PCMaxing_Go/actions/workflows/frontend-tests.yml/badge.svg)](https://github.com/aryanbhalerao/PCMaxing_Go/actions/workflows/frontend-tests.yml)
+[![Backend Tests](https://github.com/aryanbhalerao/PCMaxing_Go/actions/workflows/backend-tests.yml/badge.svg?branch=main)](https://github.com/aryanbhalerao/PCMaxing_Go/actions/workflows/backend-tests.yml)
+[![Frontend E2E Tests](https://github.com/aryanbhalerao/PCMaxing_Go/actions/workflows/frontend-tests.yml/badge.svg?branch=main)](https://github.com/aryanbhalerao/PCMaxing_Go/actions/workflows/frontend-tests.yml)
 
 PCMaxing is a full-stack web application designed for PC enthusiasts to build, customize, and check the compatibility of their dream PC setups. 
 

@@ -298,52 +298,54 @@ const PCDiagram = ({ selectedParts }: { selectedParts: Record<string, PCComponen
     <div className="pc-diagram-container" style={{background: 'var(--bg-card)', padding: '0.5rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '240px'}}>
       <svg style={{width: '100%', height: '100%'}} viewBox="0 0 420 300" fill="none" xmlns="http://www.w3.org/2000/svg">
         {/* Simple Case Body */}
-        <rect x="20" y="10" width="220" height="270" rx="4" fill="#1f2937" stroke="#374151" strokeWidth="4"/>
+        <rect x="20" y="10" width="220" height="270" rx="4" fill="var(--bg-glass)" stroke="var(--border-color)" strokeWidth="4"/>
         
         {/* Case Status (where fans used to be) */}
         <StatusIcon selected={isSelected('Case')} x={210} y={90} label="Case" />
 
         {/* Motherboard */}
-        <rect x="35" y="30" width="140" height="170" rx="2" fill="#111827" stroke="#374151" strokeWidth="2"/>
+        <rect x="35" y="30" width="140" height="170" rx="2" fill="var(--bg-card)" stroke="var(--border-color)" strokeWidth="2"/>
         
         {/* CPU */}
-        <rect x="75" y="55" width="40" height="40" rx="2" fill="#374151" stroke="#9ca3af" strokeWidth="2"/>
-        <rect x="83" y="63" width="24" height="24" rx="2" fill="#9ca3af" />
+        <rect x="75" y="55" width="40" height="40" rx="2" fill="var(--border-color)" stroke="var(--text-secondary)" strokeWidth="2"/>
+        <rect x="83" y="63" width="24" height="24" rx="2" fill="var(--text-secondary)" />
         <StatusIcon selected={isSelected('CPU')} x={95} y={75} label="CPU" />
 
         {/* RAM */}
-        <rect x="130" y="45" width="6" height="55" rx="2" fill="#4b5563" />
-        <rect x="140" y="45" width="6" height="55" rx="2" fill="#4b5563" />
-        <rect x="150" y="45" width="6" height="55" rx="2" fill="#4b5563" />
+        <rect x="130" y="45" width="6" height="55" rx="2" fill="var(--text-secondary)" />
+        <rect x="140" y="45" width="6" height="55" rx="2" fill="var(--text-secondary)" />
+        <rect x="150" y="45" width="6" height="55" rx="2" fill="var(--text-secondary)" />
         <StatusIcon selected={isSelected('RAM')} x={143} y={72} label="Memory" />
 
         {/* GPU */}
-        <rect x="40" y="130" width="150" height="35" rx="2" fill="#1f2937" stroke="#4b5563" strokeWidth="2"/>
+        <rect x="40" y="130" width="150" height="35" rx="2" fill="var(--bg-glass)" stroke="var(--border-color)" strokeWidth="2"/>
         <StatusIcon selected={isSelected('GPU')} x={115} y={147} label="GPU" />
 
         {/* PSU */}
-        <rect x="30" y="220" width="85" height="50" rx="2" fill="#111827" stroke="#4b5563" strokeWidth="2"/>
+        <rect x="30" y="220" width="85" height="50" rx="2" fill="var(--bg-card)" stroke="var(--border-color)" strokeWidth="2"/>
         <StatusIcon selected={isSelected('PSU')} x={72} y={245} label="PSU" />
 
         {/* Storage */}
-        <rect x="135" y="225" width="70" height="20" rx="2" fill="#1f2937" stroke="#4b5563" strokeWidth="2"/>
-        <rect x="135" y="250" width="70" height="20" rx="2" fill="#1f2937" stroke="#4b5563" strokeWidth="2"/>
+        <rect x="135" y="225" width="70" height="20" rx="2" fill="var(--bg-glass)" stroke="var(--border-color)" strokeWidth="2"/>
+        <rect x="135" y="250" width="70" height="20" rx="2" fill="var(--bg-glass)" stroke="var(--border-color)" strokeWidth="2"/>
         <StatusIcon selected={isSelected('Storage')} x={170} y={237} label="Storage" />
 
         {/* Monitor */}
-        <rect x="270" y="30" width="140" height="90" rx="4" fill="#111827" stroke="#4b5563" strokeWidth="3"/>
-        <rect x="275" y="35" width="130" height="75" rx="2" fill="#1f2937" />
-        <path d="M 315 120 L 315 150 M 290 150 L 350 150" stroke="#4b5563" strokeWidth="4" strokeLinecap="round"/>
+        <rect x="270" y="30" width="140" height="90" rx="4" fill="var(--bg-card)" stroke="var(--border-color)" strokeWidth="3"/>
+        <rect x="275" y="35" width="130" height="75" rx="2" fill="var(--bg-glass)" />
+        <path d="M 315 120 L 315 150 M 290 150 L 350 150" stroke="var(--border-color)" strokeWidth="4" strokeLinecap="round"/>
         <StatusIcon selected={isSelected('Monitor')} x={340} y={75} label="Monitor" />
 
         {/* Keyboard */}
-        <rect x="270" y="190" width="100" height="35" rx="2" fill="#111827" stroke="#4b5563" strokeWidth="2"/>
-        <rect x="275" y="195" width="90" height="25" fill="#1f2937" rx="2"/>
+        <rect x="270" y="190" width="100" height="35" rx="2" fill="var(--bg-card)" stroke="var(--border-color)" strokeWidth="2"/>
+        <rect x="275" y="195" width="90" height="25" fill="var(--bg-glass)" rx="2"/>
         <StatusIcon selected={isSelected('Keyboard')} x={320} y={207} label="Keyboard" />
 
         {/* Mouse */}
-        <path d="M 390 190 Q 410 190 410 210 Q 410 230 390 230 Q 375 230 375 210 Q 375 190 390 190 Z" fill="#111827" stroke="#4b5563" strokeWidth="2"/>
-        <StatusIcon selected={isSelected('Mouse')} x={392} y={210} label="Mouse" />
+        <rect x="380" y="190" width="25" height="40" rx="12" fill="var(--bg-card)" stroke="var(--border-color)" strokeWidth="2"/>
+        <line x1="380" y1="205" x2="405" y2="205" stroke="var(--border-color)" strokeWidth="2"/>
+        <line x1="392.5" y1="190" x2="392.5" y2="205" stroke="var(--border-color)" strokeWidth="2"/>
+        <StatusIcon selected={isSelected('Mouse')} x={392} y={245} label="Mouse" />
       </svg>
     </div>
   );

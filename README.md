@@ -2,7 +2,7 @@
 [![Backend Tests](https://github.com/aryanbhalerao/PCMaxing_Go/actions/workflows/backend-tests.yml/badge.svg?branch=main)](https://github.com/aryanbhalerao/PCMaxing_Go/actions/workflows/backend-tests.yml)
 [![Frontend E2E Tests](https://github.com/aryanbhalerao/PCMaxing_Go/actions/workflows/frontend-tests.yml/badge.svg?branch=main)](https://github.com/aryanbhalerao/PCMaxing_Go/actions/workflows/frontend-tests.yml)
 
-PCMaxing is a full-stack web application designed for PC enthusiasts to build, customize, and check the compatibility of their dream PC setups. 
+PCMaxing is a full-stack web application designed for PC enthusiasts to build, customize, and check the compatibility of PC build. 
 
 ## Features
 
@@ -36,8 +36,6 @@ The easiest way to run the project is using Docker and Docker Compose. This will
 
 ### Local Development
 
-If you prefer to run the application locally for development without Docker:
-
 **1. Start the Backend:**
 Make sure you have Go 1.22+ installed.
 ```bash
@@ -64,14 +62,12 @@ The frontend will run on `http://localhost:5173` (by default) and proxy `/api` r
 
 ## Tests
 
-Our test architecture ensures comprehensive coverage across the stack. The frontend utilizes end-to-end (E2E) UI testing to validate user flows, compatibility checker edge cases, and theme rendering. The backend employs unit and integration tests written in Go to verify authentication logic, database integrity, and REST API functionality. Both suites are integrated into our GitHub Actions CI/CD pipelines.
+The test architecture ensures comprehensive coverage across the stack. The frontend utilizes end-to-end (E2E) UI testing to validate user flows, compatibility checker edge cases, and theme rendering. The backend employs unit and integration tests written in Go to verify authentication logic, database integrity, and REST API functionality. Both suites are integrated into our GitHub Actions CI/CD pipelines.
 
 * [Frontend Tests](docs/frontend_tests.md)
 * [Backend Tests](docs/backend_tests.md)
 
 ## Snapshots
-
-Here is a glimpse of the PC Builder UI and compatibility checker in action:
 
 ![PC Builder Light Mode](docs/snapshots/build.png)
 ![PC Builder Dark Mode](docs/snapshots/build_dark.png)
